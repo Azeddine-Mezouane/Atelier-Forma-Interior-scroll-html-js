@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atelier Forma — Interior Design</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <nav>
+      <a href="#">Atelier Forma</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Projects</a>
+    </nav>
+
+    <div class="container">
+
+      <!-- INTRODUCTION -->
+      <section id="section-1">
+        <h1>
+          Spaces shaped by light, material, and the way we live.
+        </h1>
+
+        <p>
+          We design interiors that feel considered, timeless, and deeply
+          connected to the people who inhabit them. Every project begins with
+          an understanding of space, atmosphere, and everyday life.
+          <br />
+          <br />
+          From private residences to refined hospitality spaces, our approach
+          combines architectural clarity with tactile materials, natural light,
+          and carefully selected details. The result is an interior that feels
+          effortless, yet intentional.
+        </p>
+      </section>
+
+      <!-- PROJECTS 01 -->
+      <section id="section-2">
+        <div class="img img-1">
+          <img src="./assets/img-1.jpeg" alt="Contemporary living room" />
+        </div>
+
+        <div class="img img-2">
+          <img src="./assets/img-2.jpeg" alt="Minimalist interior" />
+        </div>
+
+        <div class="img img-3">
+          <img src="./assets/img-3.jpeg" alt="Modern dining space" />
+        </div>
+      </section>
+
+      <!-- PROJECTS 02 -->
+      <section id="section-3">
+        <div class="img img-4">
+          <img src="./assets/img-4.jpeg" alt="Residential interior" />
+        </div>
+
+        <div class="img img-5">
+          <img src="./assets/img-5.jpg" alt="Luxury interior design" />
+        </div>
+
+        <div class="img img-6">
+          <img src="./assets/img-6.jpg" alt="Architectural interior" />
+        </div>
+      </section>
+
+      <!-- SECOND TEXT SECTION -->
+      <section id="section-4">
+        <h1>
+          Designed for living, crafted to last.
+        </h1>
+
+        <p>
+          We believe great interiors are not defined by trends, but by
+          proportion, materiality, and atmosphere. Our spaces balance function
+          and expression to create environments that remain relevant over time.
+          <br /><br />
+          Every element has a purpose — from the architecture of the room to
+          the texture of a surface, the warmth of a light, or the quiet detail
+          that reveals itself over time.
+        </p>
+      </section>
+
+      <!-- PROJECTS 03 -->
+      <section id="section-5">
+        <div class="img img-7">
+          <img src="./assets/img-7.jpg" alt="Elegant living space" />
+        </div>
+
+        <div class="img img-8">
+          <img src="./assets/img-8.jpg" alt="Contemporary bedroom" />
+        </div>
+
+        <div class="img img-9">
+          <img src="./assets/img-9.jpg" alt="Refined interior space" />
+        </div>
+      </section>
+
+    </div>
+
+    <div class="timeline">
+      <div class="scroller">
+        <p>[<span>Drag</span>]</p>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+
+    <script>
+      gsap.registerPlugin(Draggable);
+
+      window.onload = function () {
+        const timeline = document.querySelector(".timeline");
+        const scroller = document.querySelector(".scroller");
+        const container = document.querySelector(".container");
+
+        const timelineWidth = timeline.offsetWidth;
+        const scrollerWidth = scroller.offsetWidth;
+
+        const gap = parseInt(
+          window.getComputedStyle(document.body).fontSize
+        );
+
+        const maxDragX =
+          timelineWidth - scrollerWidth - 2 * gap;
+
+        // Create timeline markers
+        for (let i = 0; i < 50; i++) {
+          const marker = document.createElement("div");
+
+          marker.classList.add("marker");
+
+          timeline.appendChild(marker);
+        }
+
+        let progress = 0;
+
+        function updatePosition() {
+          const scrollerX =
+            gap + maxDragX * progress;
+
+          const containerX =
+            -400 * (timelineWidth / 100) * progress;
+
+          gsap.to(scroller, {
+            x: scrollerX - gap,
+            duration: 0.4,
+            ease: "power3.out",
+          });
+
+          gsap.to(container, {
+            x: containerX,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+        }
+
+        // =========================
+        // DRAG
+        // =========================
+
+        Draggable.create(scroller, {
+          type: "x",
+
+          bounds: {
+            minX: gap,
+            maxX:
+              timelineWidth -
+              scrollerWidth -
+              gap,
+          },
+
+          onDrag: function () {
+            progress =
+              (this.x - gap) /
+              maxDragX;
+
+            const containerX =
+              -400 *
+              (timelineWidth / 100) *
+              progress;
+
+            gsap.to(container, {
+              x: containerX,
+              duration: 0.4,
+              ease: "power3.out",
+            });
+          },
+        });
+
+        // =========================
+        // VERTICAL SCROLL
+        // =========================
+
+        window.addEventListener(
+          "wheel",
+          function (event) {
+            event.preventDefault();
+
+            progress +=
+              event.deltaY * 0.0002;
+
+            progress = Math.max(
+              0,
+              Math.min(1, progress)
+            );
+
+            updatePosition();
+          },
+          { passive: false }
+        );
+
+        // =========================
+        // TRACKPAD / TOUCHPAD
+        // =========================
+
+        window.addEventListener(
+          "wheel",
+          function (event) {
+            if (
+              Math.abs(event.deltaX) >
+              Math.abs(event.deltaY)
+            ) {
+              progress +=
+                event.deltaX * 0.0001;
+
+              progress = Math.max(
+                0,
+                Math.min(1, progress)
+              );
+
+              updatePosition();
+            }
+          },
+          { passive: false }
+        );
+      };
+    </script>
+  </body>
+</html>
+```
